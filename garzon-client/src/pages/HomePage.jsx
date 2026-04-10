@@ -1,8 +1,8 @@
 import Button from "../components/Button";
-import hero from "../assets/hero_image.jpg";
-import aboutme from "../assets/aboutme.jpg";
-import projects from "../assets/projects.jpg";
-import articles from "../assets/articles.jpg";
+import hero from "../assets/images/hero_image.jpg";
+import aboutme from "../assets/images/aboutme.jpg";
+import projects from "../assets/images/projects.jpg";
+import articles from "../assets/images/articles.jpg";
 
 const HomePage = () => {
   return (

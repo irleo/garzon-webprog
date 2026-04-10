@@ -2,14 +2,17 @@ import { createBrowserRouter, RouterProvider } from 'react-router-dom'
 
 // HomePage Structure
 import Layout from './components/Layout';
+import ArticleListPage from './pages/ArticleListPage';
 import ArticlePage from './pages/ArticlePage';
 import HomePage from './pages/HomePage';
 import AboutPage from './pages/AboutPage';
+import NotFoundPage from './pages/NotFoundPage';
 
 const routes = [
   {
     path: '/',
     element: <Layout />,
+    errorElement: <NotFoundPage/>,
     children: [
       {
         path: '',
@@ -21,6 +24,10 @@ const routes = [
       },
       {
         path: 'articles',
+        element: <ArticleListPage />,
+      },
+      {
+        path: 'articles/:name',
         element: <ArticlePage />,
       },
     ],
