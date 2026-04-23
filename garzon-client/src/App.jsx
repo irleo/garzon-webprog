@@ -1,11 +1,16 @@
 import { createBrowserRouter, RouterProvider } from 'react-router-dom'
 
 // HomePage Structure
-import Layout from './components/Layout';
+import Layout from './layouts/Layout';
 import ArticleListPage from './pages/ArticleListPage';
 import ArticlePage from './pages/ArticlePage';
 import HomePage from './pages/HomePage';
 import AboutPage from './pages/AboutPage';
+
+import AuthLayout from './layouts/AuthLayout';
+import SignInPage from './pages/SignInPage';
+import SignUpPage from './pages/SignUpPage';
+
 import NotFoundPage from './pages/NotFoundPage';
 
 const routes = [
@@ -29,6 +34,21 @@ const routes = [
       {
         path: 'articles/:name',
         element: <ArticlePage />,
+      },
+    ],
+  },
+  {
+    path: "auth/",
+    element: <AuthLayout/>,
+    errorElement: <NotFoundPage/>,
+    children: [
+      {
+        path: "signin",
+        element: <SignInPage />,
+      },
+      {
+        path: "signup",
+        element: <SignUpPage />,
       },
     ],
   },

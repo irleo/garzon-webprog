@@ -7,13 +7,13 @@ import articles from "../assets/images/articles.jpg";
 const HomePage = () => {
   return (
     <div className="flex w-full flex-col gap-6">
-      <section className="border-y-2 border-zinc-900 bg-zinc-50 px-4 py-6 sm:px-6 sm:py-8 lg:px-8">
+      <section className="border-y-2 border-border bg-zinc-50 px-4 py-6 sm:px-6 sm:py-8 lg:px-8">
         <div className="grid gap-8 lg:grid-cols-2 lg:items-center">
           <div>
             <p className="mb-3 text-[11px] font-semibold uppercase tracking-[0.28em] text-zinc-500">
               Hero Section
             </p>
-            <h1 className="max-w-xl text-3xl font-bold leading-tight text-zinc-900 sm:text-4xl">
+            <h1 className="max-w-xl text-3xl font-bold leading-tight text-background sm:text-4xl">
               Welcome to Leoniverse
             </h1>
             <p className="mt-4 max-w-lg text-sm leading-7 text-zinc-600 sm:text-base">
@@ -26,7 +26,7 @@ const HomePage = () => {
               </Button>
             </div>
           </div>
-          <div className="rounded-3xl border-2 border-dashed border-zinc-300 bg-zinc-100 p-6">
+          <div className="rounded-3xl border-2 border-dashed border-zinc-300 bg-zinc-100 p-4">
             <div className="flex h-70 items-center justify-center rounded-[1.25rem] bg-zinc-200">
               <img
                 src={hero}
@@ -38,7 +38,7 @@ const HomePage = () => {
         </div>
       </section>
 
-      <section className="border-y-2 border-zinc-900 bg-zinc-50 px-4 py-6 sm:px-6 sm:py-8 lg:px-8">
+      <section className="border-y-2 border-border bg-zinc-50 px-4 py-6 sm:px-6 sm:py-8 lg:px-8">
         <div className="mb-6">
           <p className="text-[11px] font-semibold uppercase tracking-[0.28em] text-zinc-500">
             KPI Section
@@ -76,7 +76,7 @@ const HomePage = () => {
         </div>
       </section>
 
-      <section className="border-y-2 border-zinc-900 bg-zinc-50 px-4 py-6 sm:px-6 sm:py-8 lg:px-8">
+      <section className="border-y-2 border-border bg-zinc-50 px-4 py-6 sm:px-6 sm:py-8 lg:px-8">
         <div className="mb-6">
           <p className="text-[11px] font-semibold uppercase tracking-[0.28em] text-zinc-500">
             Feature Cards

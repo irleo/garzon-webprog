@@ -13,7 +13,7 @@ const Button = ({
   className = "",
 }) => {
   const classes = [
-    "inline-flex items-center justify-center rounded-full border-2 border-zinc-900 px-4 py-2 text-[10px] font-semibold uppercase tracking-[0.24em] transition",
+    "inline-flex items-center justify-center rounded-full border-2 border-zinc-900 px-4 py-2 text-[10px] font-semibold uppercase tracking-[0.24em] transition-all duration-300 hover:shadow-[0_0_10px_rgba(139,92,246,0.5)] hover:scale-105 active:scale-95",
     variantClasses[variant] ?? variantClasses.secondary,
     className,
   ]

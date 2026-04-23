@@ -33,26 +33,19 @@ const GithubIcon = ({ className = "h-4 w-4" }) => (
 
 const Footer = () => {
   return (
-    <footer className="relative overflow-hidden border-t border-zinc-200 bg-zinc-100">
-      <div className="pointer-events-none absolute inset-0">
-        <div className="absolute left-1/2 top-0 h-40 w-40 -translate-x-1/2 rounded-full bg-primary/10 blur-3xl" />
-        <div className="absolute left-10 top-10 h-2 w-2 rounded-full bg-primary/40" />
-        <div className="absolute left-1/4 top-20 h-1.5 w-1.5 rounded-full bg-white/50" />
-        <div className="absolute right-16 top-14 h-2 w-2 rounded-full bg-white/40" />
-        <div className="absolute bottom-12 left-16 h-1.5 w-1.5 rounded-full bg-primary/40" />
-        <div className="absolute bottom-10 right-1/4 h-2 w-2 rounded-full bg-white/40" />
-      </div>
-
-      <div className="mx-auto max-w-6xl px-4 py-14 sm:px-6 lg:px-8">
+    <footer className="relative overflow-hidden border-t border-primary-foreground bg-cosmic text-foreground">
+      <div className="cosmic-decor"/>
+        
+      <div className="mx-auto max-w-7xl px-4 py-14 sm:px-6 lg:px-8">
         <div className="grid gap-10 md:grid-cols-[1.3fr_0.8fr_0.9fr]">
           <div className="max-w-md">
             <div className="flex items-center gap-3">
               <div className="flex h-11 w-11 items-center justify-center rounded-full border border-zinc-200 bg-white shadow-[0_0_18px_rgba(139,92,246,0.16)]">
-                <Sparkles className="h-5 w-5 text-violet-500" />
+                <Sparkles className="h-5 w-5 text-primary" />
               </div>
 
               <div>
-                <h2 className="text-lg font-semibold tracking-wide text-zinc-900">
+                <h2 className="text-lg font-semibold tracking-wide text-foreground">
                   Leoniverse
                 </h2>
                 <p className="text-xs uppercase tracking-[0.3em] text-zinc-500">
@@ -108,7 +101,7 @@ const Footer = () => {
               </a>
 
               <a
-                href="mailto:hello@leoniverse.com"
+                href="#"
                 className="rounded-full border border-zinc-200 bg-white p-3 text-zinc-600 transition-all duration-300 hover:-translate-y-0.5 hover:text-violet-500 hover:shadow-[0_0_16px_rgba(139,92,246,0.22)]"
                 aria-label="Email"
               >
