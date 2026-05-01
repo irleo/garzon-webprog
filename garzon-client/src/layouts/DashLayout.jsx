@@ -256,6 +256,7 @@ const DashLayout = () => {
 
       {/* ── AppBar ── */}
       <AppBar position="fixed" open={open} elevation={0}>
+        <div className="cosmic-decor"/>
         <Toolbar
           sx={{ minHeight: "72px !important", px: { xs: 2, md: 2.5 }, gap: 1 }}
         >

@@ -1,9 +1,9 @@
-import Button from "../components/Button";
-import aboutMe from "../assets/images/aboutme_image.png";
-import visual1 from "../assets/images/visual1.jpg";
-import visual2 from "../assets/images/visual2.jpg";
-import visual3 from "../assets/images/visual3.jpg";
-import visual4 from "../assets/images/visual4.jpg";
+import Button from "../../components/Button";
+import aboutMe from "../../assets/images/aboutme_image.png";
+import visual1 from "../../assets/images/visual1.jpg";
+import visual2 from "../../assets/images/visual2.jpg";
+import visual3 from "../../assets/images/visual3.jpg";
+import visual4 from "../../assets/images/visual4.jpg";
 
 const AboutPage = () => {
   return (

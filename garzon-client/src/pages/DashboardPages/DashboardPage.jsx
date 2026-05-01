@@ -101,7 +101,7 @@ function DashboardPage() {
         direction={{ xs: "column", md: "row" }}
         spacing={2.5}
         sx={{ mb: 3 }}
-        alignItems="stretch"
+      
       >
         {/* Stat Cards */}
         <Stack direction="column" spacing={2.5} sx={{ flex: 1 }}>
@@ -165,8 +165,6 @@ function DashboardPage() {
             <Stack
               direction="row"
               spacing={3}
-              alignItems="center"
-              justifyContent="center"
             >
               <Gauge width={130} height={130} value={50} sx={gaugeSx} />
               <Gauge
