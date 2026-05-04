@@ -289,7 +289,7 @@ const DashLayout = () => {
           </IconButton>
 
           {/* Page title */}
-          <Box sx={{ flexGrow: 1, pl: 1 }}>
+          <Box sx={{ flexGrow: 1, pl: 4 }}>
             <Typography
               variant="h6"
               noWrap

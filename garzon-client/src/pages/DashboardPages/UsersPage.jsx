@@ -188,7 +188,6 @@ const dataGridSx = {
   backgroundColor: "transparent",
 
   "& .MuiDataGrid-main": {
-    borderRadius: "18px",
     overflow: "hidden",
   },
 

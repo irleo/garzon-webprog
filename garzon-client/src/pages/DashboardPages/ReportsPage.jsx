@@ -60,6 +60,12 @@ const chartSx = {
   "& .MuiChartsAxis-line, & .MuiChartsAxis-tick": {
     stroke: "hsl(var(--primary))",
   },
+  "& .MuiChartsTooltip-table th": {
+    color: "hsl(var(--background)) !important",
+  },
+  "& .MuiChartsTooltip-valueCell": {
+    color: "hsl(var(--primary)) !important",
+  },
 };
 
 const gaugeSx = {
