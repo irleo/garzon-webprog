@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { Outlet, Link, useLocation, useNavigate } from "react-router-dom";
-import { styled, useTheme } from "@mui/material/styles";
+import { styled } from "@mui/material/styles";
 
 import Box from "@mui/material/Box";
 import MuiDrawer from "@mui/material/Drawer";
@@ -10,22 +10,19 @@ import List from "@mui/material/List";
 import ListItem from "@mui/material/ListItem";
 import CssBaseline from "@mui/material/CssBaseline";
 import Typography from "@mui/material/Typography";
-import Divider from "@mui/material/Divider";
-import IconButton from "@mui/material/IconButton";
 import InputBase from "@mui/material/InputBase";
 import Button from "@mui/material/Button";
 import Avatar from "@mui/material/Avatar";
-import Chip from "@mui/material/Chip";
 
 import MenuIcon from "@mui/icons-material/Menu";
 import MenuOpenIcon from "@mui/icons-material/MenuOpen";
 import SearchIcon from "@mui/icons-material/Search";
-import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
-import ChevronRightIcon from "@mui/icons-material/ChevronRight";
 import DashboardIcon from "@mui/icons-material/Dashboard";
 import PeopleIcon from "@mui/icons-material/People";
 import AssessmentIcon from "@mui/icons-material/Assessment";
+import ArticleIcon from "@mui/icons-material/Article";
 import LogoutIcon from "@mui/icons-material/Logout";
+import IconButton from "@mui/material/IconButton";
 
 import ListItemButton from "@mui/material/ListItemButton";
 import ListItemIcon from "@mui/material/ListItemIcon";
@@ -46,7 +43,19 @@ const dashboardNavItems = [
     to: "/dashboard/reports",
     icon: AssessmentIcon,
   },
-  { label: "Users", title: "Users", to: "/dashboard/users", icon: PeopleIcon },
+  {
+    label: "Users",
+    title: "Users",
+    to: "/dashboard/users",
+    icon: PeopleIcon,
+    adminOnly: true,
+  },
+  {
+    label: "Articles",
+    title: "Articles",
+    to: "/dashboard/articles",
+    icon: ArticleIcon,
+  },
 ];
 
 const openedMixin = (theme) => ({
@@ -116,16 +125,35 @@ const Drawer = styled(MuiDrawer, {
   flexShrink: 0,
   whiteSpace: "nowrap",
   boxSizing: "border-box",
+  height: "100vh",
+
   "& .MuiDrawer-paper": {
     color: "hsl(var(--foreground))",
+    height: "100vh",
+    overflowX: "hidden",
+    overflowY: "hidden",
   },
+
   ...(open && {
     ...openedMixin(theme),
-    "& .MuiDrawer-paper": openedMixin(theme),
+    "& .MuiDrawer-paper": {
+      ...openedMixin(theme),
+      color: "hsl(var(--foreground))",
+      height: "100vh",
+      overflowX: "hidden",
+      overflowY: "hidden",
+    },
   }),
+
   ...(!open && {
     ...closedMixin(theme),
-    "& .MuiDrawer-paper": closedMixin(theme),
+    "& .MuiDrawer-paper": {
+      ...closedMixin(theme),
+      color: "hsl(var(--foreground))",
+      height: "100vh",
+      overflowX: "hidden",
+      overflowY: "hidden",
+    },
   }),
 }));
 
@@ -181,25 +209,40 @@ const getPageTitle = (pathname) =>
   dashboardNavItems.find(({ to }) => to === pathname)?.title ?? "Welcome";
 
 const DashLayout = () => {
-  const theme = useTheme();
   const [open, setOpen] = useState(true);
   const location = useLocation();
   const pageTitle = getPageTitle(location.pathname);
   const navigate = useNavigate();
+  const accountType = localStorage.getItem("type");
+  const firstName = localStorage.getItem("firstname") || "Account";
+  const lastName = localStorage.getItem("lastname") || "";
+  const visibleNavItems = dashboardNavItems.filter(
+    (item) => !item.adminOnly || accountType === "admin",
+  );
+  
+  console.log("Dashboard user:", {
+    firstName,
+    accountType,
+  });
 
-  const handleLogout = () => navigate("/");
+  const handleLogout = () => {
+    localStorage.removeItem("token");
+    localStorage.removeItem("firstname");
+    localStorage.removeItem("type");
+    localStorage.removeItem("rememberMe");
+    navigate("/");
+  };
 
   return (
     <Box
       sx={{
         display: "flex",
-        minHeight: "100vh",
+        height: "100vh",
         background: "var(--cosmic-bg)",
         color: "hsl(var(--foreground))",
         position: "relative",
         overflow: "hidden",
 
-        /* Ambient glow at top */
         "&::before": {
           content: '""',
           position: "fixed",
@@ -254,13 +297,16 @@ const DashLayout = () => {
     >
       <CssBaseline />
 
-      {/* ── AppBar ── */}
       <AppBar position="fixed" open={open} elevation={0}>
-        <div className="cosmic-decor"/>
+        <div className="cosmic-decor" />
+
         <Toolbar
-          sx={{ minHeight: "72px !important", px: { xs: 2, md: 2.5 }, gap: 1 }}
+          sx={{
+            minHeight: "72px !important",
+            px: { xs: 2, md: 2.5 },
+            gap: 1,
+          }}
         >
-          {/* Hamburger */}
           <IconButton
             onClick={() => setOpen((p) => !p)}
             edge="start"
@@ -288,7 +334,6 @@ const DashLayout = () => {
             )}
           </IconButton>
 
-          {/* Page title */}
           <Box sx={{ flexGrow: 1, pl: 4 }}>
             <Typography
               variant="h6"
@@ -301,6 +346,7 @@ const DashLayout = () => {
             >
               {pageTitle}
             </Typography>
+
             <Typography
               variant="caption"
               sx={{
@@ -313,7 +359,6 @@ const DashLayout = () => {
             </Typography>
           </Box>
 
-          {/* Search */}
           <Search
             sx={{
               display: { xs: "none", md: "block" },
@@ -331,7 +376,6 @@ const DashLayout = () => {
             />
           </Search>
 
-          {/* Logout */}
           <Button
             onClick={handleLogout}
             startIcon={<LogoutIcon sx={{ fontSize: "16px !important" }} />}
@@ -359,21 +403,19 @@ const DashLayout = () => {
         </Toolbar>
       </AppBar>
 
-      {/* ── Sidebar ── */}
       <Drawer variant="permanent" open={open}>
-        {/* Brand header */}
         <DrawerHeader
           sx={{
             minHeight: "72px !important",
             px: 2,
             justifyContent: "space-between",
           }}
-        ></DrawerHeader>
+        />
 
-        {/* Nav items */}
         <List sx={{ px: open ? 1.5 : 2, py: 2, flexGrow: 1 }}>
-          {dashboardNavItems.map(({ label, to, icon: Icon }) => {
+          {visibleNavItems.map(({ label, to, icon: Icon }) => {
             const active = location.pathname === to;
+
             return (
               <ListItem
                 key={to}
@@ -427,7 +469,7 @@ const DashLayout = () => {
                         : "hsl(var(--muted-foreground))",
                     }}
                   >
-                    <Icon fontSize="medium" />
+                    {React.createElement(Icon, { fontSize: "medium" })}
                   </ListItemIcon>
 
                   <ListItemText
@@ -441,7 +483,6 @@ const DashLayout = () => {
                     }}
                   />
 
-                  {/* Active indicator dot */}
                   {active && open && (
                     <Box
                       sx={{
@@ -460,7 +501,6 @@ const DashLayout = () => {
           })}
         </List>
 
-        {/* User profile */}
         {open ? (
           <Box
             sx={{
@@ -486,21 +526,30 @@ const DashLayout = () => {
                 flexShrink: 0,
               }}
             >
-              A
+              {`${firstName?.charAt(0) || ""}${lastName?.charAt(0) || ""}`.toUpperCase() || "User"}
             </Avatar>
+
             <Box sx={{ minWidth: 0, flexGrow: 1 }}>
               <Typography
-                sx={{ fontWeight: 750, fontSize: "0.875rem", lineHeight: 1.2 }}
+                sx={{
+                  fontWeight: 750,
+                  fontSize: "0.875rem",
+                  lineHeight: 1.2,
+                }}
                 noWrap
               >
-                Admin Account
+                {firstName}
               </Typography>
+
               <Typography
                 variant="caption"
-                sx={{ color: "hsl(var(--muted-foreground))", lineHeight: 1 }}
+                sx={{
+                  color: "hsl(var(--muted-foreground))",
+                  lineHeight: 1,
+                }}
                 noWrap
               >
-                Workspace administrator
+                {accountType === "admin" ? "Administrator" : "Editor"}
               </Typography>
             </Box>
           </Box>
@@ -522,20 +571,21 @@ const DashLayout = () => {
                 fontSize: "0.8rem",
               }}
             >
-              A
+              {firstName.charAt(0).toUpperCase()}
             </Avatar>
           </Box>
         )}
       </Drawer>
 
-      {/* ── Main content ── */}
       <Box
         component="main"
         sx={{
           flexGrow: 1,
-          minHeight: "100vh",
+          height: "100vh",
           position: "relative",
           zIndex: 1,
+          overflowY: "auto",
+          overflowX: "hidden",
         }}
       >
         <DrawerHeader sx={{ minHeight: "72px !important" }} />

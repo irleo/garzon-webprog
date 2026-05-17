@@ -1,4 +1,5 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
+import { Navigate } from "react-router-dom";
 import {
   Alert,
   Box,
@@ -26,6 +27,11 @@ import VisibilityOff from "@mui/icons-material/VisibilityOff";
 import SearchIcon from "@mui/icons-material/Search";
 import { DataGrid } from "@mui/x-data-grid";
 import usersSeed from "../../data/users.json?raw";
+import {
+  createUser,
+  fetchUsers,
+  updateUser,
+} from "../../services/UserService";
 
 const roles = ["admin", "editor", "viewer"];
 const genders = ["male", "female", "other"];
@@ -47,43 +53,66 @@ const blankForm = {
 const labelize = (value) =>
   value ? `${value.charAt(0).toUpperCase()}${value.slice(1)}` : "";
 
+const normalizeUser = (user, index = 0) => ({
+  id: user._id || user.id || index + 1,
+  firstName: String(user.firstName ?? "").trim(),
+  lastName: String(user.lastName ?? "").trim(),
+  age: String(user.age ?? "").trim(),
+  gender: genders.includes(
+    String(user.gender ?? "")
+      .trim()
+      .toLowerCase(),
+  )
+    ? String(user.gender ?? "")
+        .trim()
+        .toLowerCase()
+    : "",
+  contactNumber: String(user.contactNumber ?? "").trim(),
+  email: String(user.email ?? "")
+    .trim()
+    .toLowerCase(),
+  role: roles.includes(
+    String(user.role ?? user.type ?? "")
+      .trim()
+      .toLowerCase(),
+  )
+    ? String(user.role ?? user.type ?? "")
+        .trim()
+        .toLowerCase()
+    : "editor",
+  username: String(user.username ?? "")
+    .trim()
+    .toLowerCase(),
+  password: String(user.password ?? ""),
+  address: String(user.address ?? "").trim(),
+  isActive: typeof user.isActive === "boolean" ? user.isActive : true,
+});
+
+const toApiUser = (user) => {
+  const payload = {
+    firstName: user.firstName,
+    lastName: user.lastName,
+    age: user.age,
+    gender: user.gender,
+    contactNumber: user.contactNumber,
+    email: user.email,
+    type: user.role,
+    username: user.username,
+    address: user.address,
+    isActive: user.isActive,
+  };
+
+  if (user.password) {
+    payload.password = user.password;
+  }
+
+  return payload;
+};
+
 const loadUsers = () => {
   try {
     return {
-      users: JSON.parse(usersSeed).map((user, index) => ({
-        id: Number(user.id) || index + 1,
-        firstName: String(user.firstName ?? "").trim(),
-        lastName: String(user.lastName ?? "").trim(),
-        age: String(user.age ?? "").trim(),
-        gender: genders.includes(
-          String(user.gender ?? "")
-            .trim()
-            .toLowerCase(),
-        )
-          ? String(user.gender ?? "")
-              .trim()
-              .toLowerCase()
-          : "",
-        contactNumber: String(user.contactNumber ?? "").trim(),
-        email: String(user.email ?? "")
-          .trim()
-          .toLowerCase(),
-        role: roles.includes(
-          String(user.role ?? "")
-            .trim()
-            .toLowerCase(),
-        )
-          ? String(user.role ?? "")
-              .trim()
-              .toLowerCase()
-          : "editor",
-        username: String(user.username ?? "")
-          .trim()
-          .toLowerCase(),
-        password: String(user.password ?? ""),
-        address: String(user.address ?? "").trim(),
-        isActive: typeof user.isActive === "boolean" ? user.isActive : true,
-      })),
+      users: JSON.parse(usersSeed).map(normalizeUser),
       error: "",
     };
   } catch {
@@ -182,7 +211,7 @@ const modalFieldSx = {
 };
 
 const dataGridSx = {
-  minWidth: 980,
+  minWidth: 1100,
   border: "none",
   color: "hsl(var(--foreground))",
   backgroundColor: "transparent",
@@ -198,12 +227,14 @@ const dataGridSx = {
 
   "& .MuiDataGrid-columnHeader, & .MuiDataGrid-columnHeaderTitle": {
     color: "hsl(var(--background))",
-    fontWeight: 800,
+    fontWeight: 600,
   },
 
   "& .MuiDataGrid-cell": {
     color: "hsl(var(--foreground))",
     borderColor: "hsl(var(--border) / 0.65)",
+    display: "flex",
+    alignItems: "center",
   },
 
   "& .MuiDataGrid-row:hover": {
@@ -256,6 +287,8 @@ const UsersPage = () => {
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
 
   const [users, setUsers] = useState(seed.users);
+  const [loadError, setLoadError] = useState(seed.error);
+  const [isSaving, setIsSaving] = useState(false);
   const [modal, setModal] = useState({ open: false, id: null });
   const [form, setForm] = useState(blankForm);
   const [errors, setErrors] = useState({});
@@ -267,6 +300,27 @@ const UsersPage = () => {
     gender: "all",
     status: "all",
   });
+
+  const accountType = localStorage.getItem("type");
+
+  useEffect(() => {
+    const loadApiUsers = async () => {
+      try {
+        const { data } = await fetchUsers();
+        setUsers((data.users || []).map(normalizeUser));
+        setLoadError("");
+      } catch (error) {
+        setLoadError(
+          error.response?.data?.message ||
+            "Unable to load users from the backend. Showing local sample data.",
+        );
+      }
+    };
+
+    if (accountType === "admin") {
+      loadApiUsers();
+    }
+  }, [accountType]);
 
   const resetForm = () => {
     setForm({ ...blankForm });
@@ -316,7 +370,6 @@ const UsersPage = () => {
       ["email", "Email"],
       ["role", "Role"],
       ["username", "Username"],
-      ["password", "Password"],
       ["address", "Address"],
     ].forEach(([key, label]) => {
       if (!String(form[key]).trim()) {
@@ -336,7 +389,11 @@ const UsersPage = () => {
       nextErrors.username = "Username must not contain spaces.";
     }
 
-    if (!nextErrors.password && form.password.length < 8) {
+    if (!modal.id && !form.password) {
+      nextErrors.password = "Password is required.";
+    }
+
+    if (!nextErrors.password && form.password && form.password.length < 8) {
       nextErrors.password = "Password must be at least 8 characters.";
     }
 
@@ -361,7 +418,7 @@ const UsersPage = () => {
     return nextErrors;
   };
 
-  const handleSubmit = (event) => {
+  const handleSubmit = async (event) => {
     event.preventDefault();
 
     const nextErrors = validate();
@@ -385,33 +442,56 @@ const UsersPage = () => {
       isActive: form.isActive,
     };
 
-    setUsers((prev) =>
-      modal.id
-        ? prev.map((user) =>
-            user.id === modal.id ? { ...user, ...nextUser } : user,
-          )
-        : [
-            ...prev,
-            {
-              id:
-                prev.reduce(
-                  (max, user) => Math.max(max, Number(user.id) || 0),
-                  0,
-                ) + 1,
-              ...nextUser,
-            },
-          ],
-    );
+    setIsSaving(true);
 
-    closeModal();
+    try {
+      const payload = toApiUser(nextUser);
+      const { data } = modal.id
+        ? await updateUser(modal.id, payload)
+        : await createUser(payload);
+
+      const savedUser = normalizeUser(data);
+
+      setUsers((prev) =>
+        modal.id
+          ? prev.map((user) =>
+              user.id === modal.id ? { ...user, ...savedUser } : user,
+            )
+          : [...prev, savedUser],
+      );
+
+      closeModal();
+    } catch (error) {
+      setErrors((prev) => ({
+        ...prev,
+        form:
+          error.response?.data?.message ||
+          "Unable to save user. Please try again.",
+      }));
+    } finally {
+      setIsSaving(false);
+    }
   };
 
-  const toggleStatus = (id) => {
-    setUsers((prev) =>
-      prev.map((user) =>
-        user.id === id ? { ...user, isActive: !user.isActive } : user,
-      ),
-    );
+  const toggleStatus = async (id) => {
+    const user = users.find((item) => item.id === id);
+    if (!user) return;
+
+    try {
+      const { data } = await updateUser(id, {
+        isActive: !user.isActive,
+      });
+      const savedUser = normalizeUser(data);
+
+      setUsers((prev) =>
+        prev.map((item) => (item.id === id ? { ...item, ...savedUser } : item)),
+      );
+    } catch (error) {
+      setLoadError(
+        error.response?.data?.message ||
+          "Unable to update user status. Please try again.",
+      );
+    }
   };
 
   const filteredUsers = useMemo(() => {
@@ -484,7 +564,8 @@ const UsersPage = () => {
           size="small"
           label={row.isActive ? "Active" : "Inactive"}
           sx={{
-            fontWeight: 800,
+            px: 0.5,
+            py: 1.5,
             color: row.isActive
               ? "hsl(var(--primary-foreground))"
               : "hsl(var(--foreground))",
@@ -526,6 +607,10 @@ const UsersPage = () => {
       ),
     },
   ];
+
+  if (accountType !== "admin") {
+    return <Navigate to="/dashboard/articles" replace />;
+  }
 
   return (
     <Box
@@ -579,9 +664,9 @@ const UsersPage = () => {
         </Button>
       </Stack>
 
-      {seed.error ? (
+      {loadError ? (
         <Alert severity="error" sx={{ mb: 2 }}>
-          {seed.error}
+          {loadError}
         </Alert>
       ) : null}
 
@@ -706,6 +791,7 @@ const UsersPage = () => {
               color: "hsl(var(--foreground))",
               border: "1px solid hsl(var(--border))",
               backgroundImage: "none",
+              overflowX: "hidden",
             },
           },
         }}
@@ -713,7 +799,7 @@ const UsersPage = () => {
         <Box component="form" onSubmit={handleSubmit}>
           <DialogTitle
             sx={{
-              fontWeight: 850,
+              fontWeight: 800,
               letterSpacing: "-0.02em",
               color: "hsl(var(--foreground))",
             }}
@@ -729,6 +815,10 @@ const UsersPage = () => {
             }}
           >
             <Stack spacing={2} sx={{ pt: 1 }}>
+              {errors.form ? (
+                <Alert severity="error">{errors.form}</Alert>
+              ) : null}
+
               <Stack direction={{ xs: "column", sm: "row" }} spacing={2}>
                 <TextField {...fieldProps("firstName", "First Name")} />
                 <TextField {...fieldProps("lastName", "Last Name")} />
@@ -842,13 +932,18 @@ const UsersPage = () => {
             <Button
               type="submit"
               variant="contained"
+              disabled={isSaving}
               sx={{
                 borderRadius: "12px",
                 textTransform: "none",
                 fontWeight: 800,
               }}
             >
-              {modal.id ? "Update User" : "Save User"}
+              {isSaving
+                ? "Saving..."
+                : modal.id
+                  ? "Update User"
+                  : "Save User"}
             </Button>
           </DialogActions>
         </Box>

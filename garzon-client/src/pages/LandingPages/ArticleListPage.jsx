@@ -1,8 +1,29 @@
+import { useEffect, useState } from 'react';
 import Button from '../../components/Button.jsx';
 import ArticleList from '../../components/ArticleList.jsx';
-import articles from '../../data/article-content.js';
+import staticArticles from '../../data/article-content.js';
+import { fetchArticles } from '../../services/ArticleService.js';
+
 
 const ArticleListPage = () => {
+  const [articles, setArticles] = useState(staticArticles);
+
+  useEffect(() => {
+    const loadArticles = async () => {
+      try {
+        const { data } = await fetchArticles();
+
+        if (data.articles?.length) {
+          setArticles(data.articles.filter((article) => article.isActive !== false));
+        }
+      } catch {
+        setArticles(staticArticles);
+      }
+    };
+
+    loadArticles();
+  }, []);
+
   return (
     <div className="flex w-full flex-col gap-6">
       <section className="border-y-2 border-zinc-900 bg-zinc-50 px-4 py-6 sm:px-6 sm:py-8 lg:px-8">

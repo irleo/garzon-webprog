@@ -1,0 +1,9 @@
+# server-side
+
+garzon-server/.env
+garzon-server/node_modules
+
+# client-side
+
+garzon-client/.env
+garzon-client/node_modules

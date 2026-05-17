@@ -1,10 +1,44 @@
+import { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import Button from '../../components/Button.jsx';
-import articles from '../../data/article-content.js';
+import staticArticles from '../../data/article-content.js';
+import { fetchArticleByName } from '../../services/ArticleService.js';
 
 function ArticlePage() {
   const { name } = useParams();
-  const article = articles.find(article => article.name === name);
+  const [article, setArticle] = useState(() =>
+    staticArticles.find(article => article.name === name),
+  );
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    const loadArticle = async () => {
+      setIsLoading(true);
+
+      try {
+        const { data } = await fetchArticleByName(name);
+        setArticle(data.article?.isActive === false ? null : data.article);
+      } catch {
+        setArticle(staticArticles.find(article => article.name === name));
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    loadArticle();
+  }, [name]);
+
+  if (isLoading) {
+    return (
+      <div className="flex w-full flex-col gap-6">
+        <section className="border-y-2 border-zinc-900 bg-zinc-50 px-4 py-6 sm:px-6 sm:py-8 lg:px-8">
+          <div className="mx-auto max-w-3xl">
+            <h1 className="text-3xl font-bold text-zinc-900">Loading article...</h1>
+          </div>
+        </section>
+      </div>
+    );
+  }
 
   if (!article) {
     return (
