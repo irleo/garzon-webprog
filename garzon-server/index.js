@@ -12,7 +12,7 @@ const app = express();
 
 app.use(express.json());
 
-//Middleware
+// Middleware
 app.use(jsonParser);
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(cors());
