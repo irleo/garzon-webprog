@@ -10,9 +10,6 @@ const articleRoutes = require("./routes/articleRoutes");
 
 const app = express();
 
-// Database Connection
-connectDB();
-
 app.use(express.json());
 
 //Middleware
@@ -47,6 +44,19 @@ app.use((req, res, next) => {
 });
 
 // Routes
+app.get("/", (req, res) => {
+    res.json({ message: "Garzon API is running" });
+});
+
+app.use("/api", async (req, res, next) => {
+    try {
+        await connectDB();
+        next();
+    } catch (error) {
+        next(error);
+    }
+});
+
 app.use("/api/users", userRoutes);
 app.use("/api/articles", articleRoutes);
 
@@ -57,4 +67,16 @@ app.use((err, req, res, next) => {
 });
 
 const PORT = process.env.PORT || 5000;
-app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
+
+if (process.env.NODE_ENV !== "production") {
+    connectDB()
+        .then(() => {
+            app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
+        })
+        .catch((error) => {
+            console.error(`Database connection failed: ${error.message}`);
+            process.exit(1);
+        });
+}
+
+module.exports = app;
