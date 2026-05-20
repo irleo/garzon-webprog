@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
+import { toast } from 'sonner';
 import Button from '../../components/Button';
 import { loginUser } from '../../services/UserService';
 
@@ -16,7 +17,6 @@ const SignInPage = () => {
   const [isLoading, setIsLoading] = useState(false);
 
   const navigate = useNavigate();
-  
 
   const handleLogin = async (e) => {
     e.preventDefault();
@@ -28,6 +28,7 @@ const SignInPage = () => {
       
       if (data.type === 'viewer') {
         setError('Viewers cannot log in.');
+        toast.error('Viewers cannot log in.');
         return;
       }
 
@@ -41,15 +42,20 @@ const SignInPage = () => {
         localStorage.removeItem('rememberMe');
       }
 
-      navigate('/dashboard', {
-        state: {
-          firstName: data.firstName,
-          type: data.type,
-        },
-      });
+      toast.success('Login successful. Opening dashboard...');
+      setTimeout(() => {
+        navigate('/dashboard', {
+          state: {
+            firstName: data.firstName,
+            type: data.type,
+          },
+        });
+      }, 650);
     } catch (err) {
-      console.error('Login failed:', err.response?.data?.message || err.message);
-      setError(err.response?.data?.message || 'Login failed. Please try again.');
+      const message = err.response?.data?.message || 'Login failed. Please try again.';
+      console.error('Login failed:', message);
+      setError(message);
+      toast.error(message);
     } finally {
       setIsLoading(false);
     }

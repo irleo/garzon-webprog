@@ -1,4 +1,5 @@
 import { createBrowserRouter, RouterProvider } from 'react-router-dom'
+import { Toaster } from 'sonner';
 
 // HomePage Structure
 import Layout from './layouts/Layout';
@@ -89,6 +90,7 @@ const router = createBrowserRouter(routes);
 function App() {
   return (
     <>
+      <Toaster richColors position="top-right" closeButton />
       <RouterProvider router={router} />
     </>
   );

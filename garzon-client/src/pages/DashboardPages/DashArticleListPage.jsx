@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
+import { toast } from "sonner";
 import {
   Alert,
   Box,
@@ -162,10 +163,12 @@ const DashArticleListPage = () => {
       setArticles((data.articles || []).map(normalizeArticle));
       setLoadError("");
     } catch (error) {
-      setLoadError(
+      const message =
         error.response?.data?.message ||
-          "Unable to load articles from the backend.",
-      );
+        "Unable to load articles from the backend.";
+
+      setLoadError(message);
+      toast.error(message);
     }
   };
 
@@ -232,19 +235,24 @@ const DashArticleListPage = () => {
     try {
       if (modal.id) {
         await updateArticle(modal.id, payload);
+        toast.success("Article updated successfully.");
       } else {
         await createArticle(payload);
+        toast.success("Article created successfully.");
       }
 
       await loadArticles();
       closeModal();
     } catch (error) {
+      const message =
+        error.response?.data?.message ||
+        "Unable to save article. Please try again.";
+
       setErrors((prev) => ({
         ...prev,
-        form:
-          error.response?.data?.message ||
-          "Unable to save article. Please try again.",
+        form: message,
       }));
+      toast.error(message);
     } finally {
       setIsSaving(false);
     }
@@ -254,11 +262,14 @@ const DashArticleListPage = () => {
     try {
       await deleteArticle(id);
       setArticles((prev) => prev.filter((article) => article.id !== id));
+      toast.success("Article deleted successfully.");
     } catch (error) {
-      setLoadError(
+      const message =
         error.response?.data?.message ||
-          "Unable to delete article. Please try again.",
-      );
+        "Unable to delete article. Please try again.";
+
+      setLoadError(message);
+      toast.error(message);
     }
   };
 

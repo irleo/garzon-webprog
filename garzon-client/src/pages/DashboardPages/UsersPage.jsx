@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 import { Navigate } from "react-router-dom";
+import { toast } from "sonner";
 import {
   Alert,
   Box,
@@ -310,10 +311,12 @@ const UsersPage = () => {
         setUsers((data.users || []).map(normalizeUser));
         setLoadError("");
       } catch (error) {
-        setLoadError(
+        const message =
           error.response?.data?.message ||
-            "Unable to load users from the backend. Showing local sample data.",
-        );
+          "Unable to load users from the backend. Showing local sample data.";
+
+        setLoadError(message);
+        toast.error(message);
       }
     };
 
@@ -460,14 +463,18 @@ const UsersPage = () => {
           : [...prev, savedUser],
       );
 
+      toast.success(modal.id ? "User updated successfully." : "User created successfully.");
       closeModal();
     } catch (error) {
+      const message =
+        error.response?.data?.message ||
+        "Unable to save user. Please try again.";
+
       setErrors((prev) => ({
         ...prev,
-        form:
-          error.response?.data?.message ||
-          "Unable to save user. Please try again.",
+        form: message,
       }));
+      toast.error(message);
     } finally {
       setIsSaving(false);
     }
@@ -486,11 +493,18 @@ const UsersPage = () => {
       setUsers((prev) =>
         prev.map((item) => (item.id === id ? { ...item, ...savedUser } : item)),
       );
-    } catch (error) {
-      setLoadError(
-        error.response?.data?.message ||
-          "Unable to update user status. Please try again.",
+      toast.success(
+        savedUser.isActive
+          ? "User activated successfully."
+          : "User disabled successfully.",
       );
+    } catch (error) {
+      const message =
+        error.response?.data?.message ||
+        "Unable to update user status. Please try again.";
+
+      setLoadError(message);
+      toast.error(message);
     }
   };
 

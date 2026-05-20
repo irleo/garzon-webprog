@@ -1,4 +1,4 @@
-const Article = require('../models/Article');
+const Article = require("../models/Article");
 
 const getArticles = async (req, res) => {
   try {
@@ -11,10 +11,12 @@ const getArticles = async (req, res) => {
 
 const getArticleByName = async (req, res) => {
   try {
-    const article = await Article.findOne({ name: req.params.name.toLowerCase() });
+    const article = await Article.findOne({
+      name: req.params.name.toLowerCase(),
+    });
 
     if (!article) {
-      return res.status(404).json({ message: 'Article not found' });
+      return res.status(404).json({ message: "Article not found" });
     }
 
     res.json({ article });
@@ -22,7 +24,6 @@ const getArticleByName = async (req, res) => {
     res.status(500).json({ message: error.message });
   }
 };
-
 
 const generateArticleId = async () => {
   const lastArticle = await Article.findOne({
@@ -32,20 +33,20 @@ const generateArticleId = async () => {
   let nextNumber = 1;
 
   if (lastArticle?.articleId) {
-    const lastNumber = Number(lastArticle.articleId.replace('ART-', ''));
+    const lastNumber = Number(lastArticle.articleId.replace("ART-", ""));
 
     if (!Number.isNaN(lastNumber)) {
       nextNumber = lastNumber + 1;
     }
   }
 
-  let articleId = `ART-${String(nextNumber).padStart(4, '0')}`;
+  let articleId = `ART-${String(nextNumber).padStart(4, "0")}`;
 
   let existingArticle = await Article.findOne({ articleId });
 
   while (existingArticle) {
     nextNumber += 1;
-    articleId = `ART-${String(nextNumber).padStart(4, '0')}`;
+    articleId = `ART-${String(nextNumber).padStart(4, "0")}`;
     existingArticle = await Article.findOne({ articleId });
   }
 
@@ -75,7 +76,7 @@ const updateArticle = async (req, res) => {
     });
 
     if (!article) {
-      return res.status(404).json({ message: 'Article not found' });
+      return res.status(404).json({ message: "Article not found" });
     }
 
     res.json({ article });
@@ -89,19 +90,13 @@ const deleteArticle = async (req, res) => {
     const article = await Article.findByIdAndDelete(req.params.id);
 
     if (!article) {
-      return res.status(404).json({ message: 'Article not found' });
+      return res.status(404).json({ message: "Article not found" });
     }
 
-    res.json({ message: 'Article deleted successfully' });
+    res.json({ message: "Article deleted successfully" });
   } catch (error) {
     res.status(400).json({ message: error.message });
   }
 };
 
-module.exports = {
-  getArticles,
-  getArticleByName,
-  createArticle,
-  updateArticle,
-  deleteArticle,
-};
+module.exports = { getArticles, getArticleByName, createArticle, updateArticle, deleteArticle, };

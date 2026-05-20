@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
+import { toast } from 'sonner';
 import Button from '../../components/Button';
 import { createUser } from '../../services/UserService';
 
@@ -54,11 +55,16 @@ const SignUpPage = () => {
         isActive: true,
       });
 
-      setSuccess('Account created successfully. Redirecting to sign in...');
+      const message = 'Account created successfully. Redirecting to sign in...';
+      setSuccess(message);
+      toast.success(message);
       setForm(blankForm);
       setTimeout(() => navigate('/auth/signin'), 900);
     } catch (err) {
-      setError(err.response?.data?.message || 'Signup failed. Please check your details.');
+      const message =
+        err.response?.data?.message || 'Signup failed. Please check your details.';
+      setError(message);
+      toast.error(message);
     } finally {
       setIsLoading(false);
     }

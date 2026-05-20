@@ -2,11 +2,7 @@ const mongoose = require("mongoose");
 
 const articleSchema = new mongoose.Schema(
   {
-    articleId: {
-      type: String,
-      unique: true,
-      trim: true,
-    },
+    articleId: { type: String, unique: true, trim: true },
     name: {
       type: String,
       required: true,
@@ -14,16 +10,7 @@ const articleSchema = new mongoose.Schema(
       trim: true,
       lowercase: true,
     },
-    title: {
-      type: String,
-      required: true,
-      trim: true,
-    },
-    image: {
-      type: String,
-      default: "",
-      trim: true,
-    },
+    title: { type: String, required: true, trim: true },
     content: {
       type: [String],
       required: true,
@@ -33,14 +20,8 @@ const articleSchema = new mongoose.Schema(
         message: "Article content must include at least one paragraph",
       },
     },
-    isFeatured: {
-      type: Boolean,
-      default: false,
-    },
-    isActive: {
-      type: Boolean,
-      default: true,
-    },
+    isFeatured: { type: Boolean, default: false },
+    isActive: { type: Boolean, default: true },
   },
   { timestamps: true },
 );
