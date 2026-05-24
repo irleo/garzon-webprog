@@ -5,10 +5,10 @@ import NavBar from "../components/NavBar";
 
 const Layout = () => {
   return (
-    <div className="min-h-screen bg-background/10 text-foreground">
+    <div className="relative min-h-screen overflow-hidden bg-cosmic text-foreground">
       <div className="cosmic-decor"/>
       <NavBar />
-      <main className="pt-20">
+      <main className="relative z-10 pt-20">
         <Outlet />
       </main>
       <Footer />

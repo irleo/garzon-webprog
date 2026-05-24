@@ -61,11 +61,71 @@
       opacity: 0;
     }
   }
+
+  /* Orbital animations */
+  @keyframes leo-orbit1 {
+    from {
+      transform: rotate(0deg);
+    }
+    to {
+      transform: rotate(360deg);
+    }
+  }
+  @keyframes leo-orbit2 {
+    from {
+      transform: rotate(60deg);
+    }
+    to {
+      transform: rotate(420deg);
+    }
+  }
+  @keyframes leo-orbit3 {
+    from {
+      transform: rotate(140deg);
+    }
+    to {
+      transform: rotate(500deg);
+    }
+  }
+  @keyframes leo-orbit4 {
+    from {
+      transform: rotate(220deg);
+    }
+    to {
+      transform: rotate(580deg);
+    }
+  }
+  @keyframes leo-orbit5 {
+    from {
+      transform: rotate(300deg);
+    }
+    to {
+      transform: rotate(660deg);
+    }
+  }
+  @keyframes leo-pulse {
+    0%,
+    100% {
+      opacity: 0.85;
+    }
+    50% {
+      opacity: 1;
+    }
+  }
+  @keyframes leo-twink {
+    0%,
+    100% {
+      opacity: 0.3;
+    }
+    50% {
+      opacity: 1;
+    }
+  }
 }
 
 @layer base {
   :root {
-    --background: 240 35% 5%;     /* Darker - 222 47% 4% */
+    --background: 240 35% 5%; /* Darker - 222 47% 4% */
     --foreground: 213 31% 91%;
     --cosmic-bg:
       radial-gradient(
@@ -184,6 +244,29 @@
       background-repeat: no-repeat;
       filter: drop-shadow(0 0 6px rgba(255, 255, 255, 0.18));
     }
+
+    .leo-o1 {
+      animation: leo-orbit1 18s linear infinite;
+    }
+    .leo-o2 {
+      animation: leo-orbit2 30s linear infinite;
+    }
+    .leo-o3 {
+      animation: leo-orbit3 48s linear infinite;
+    }
+    .leo-o4 {
+      animation: leo-orbit4 70s linear infinite;
+    }
+    .leo-o5 {
+      animation: leo-orbit4 14s linear infinite;
+    }
+    .leo-sun {
+      animation: leo-pulse 3s ease-in-out infinite;
+    }
+    .leo-star {
+      animation: leo-twink var(--ld, 3s) ease-in-out infinite;
+      animation-delay: var(--ll, 0s);
+    }
   }
 
   * {
@@ -264,5 +347,3 @@
   margin: 0 auto;
   padding: 0;
 }
-
-

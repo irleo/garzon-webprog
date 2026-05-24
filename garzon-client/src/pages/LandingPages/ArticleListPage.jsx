@@ -25,31 +25,42 @@ const ArticleListPage = () => {
   }, []);
 
   return (
-    <div className="flex w-full flex-col gap-6">
-      <section className="border-y-2 border-zinc-900 bg-zinc-50 px-4 py-6 sm:px-6 sm:py-8 lg:px-8">
-        <p className="mb-3 text-[11px] font-semibold uppercase tracking-[0.28em] text-zinc-500">
-          Articles
-        </p>
-        <h1 className="max-w-xl text-3xl font-bold leading-tight text-zinc-900 sm:text-4xl">
-          Featured articles in a simple card grid
-        </h1>
-        <p className="mt-4 max-w-lg text-sm leading-7 text-zinc-600 sm:text-base">
-          A clean wireframe section for article thumbnails, titles, short
-          descriptions, and one clear action per card.
-        </p>
-        <div className="mt-6">
-          <Button to="/">Back Home</Button>
+    <div className="w-full overflow-hidden px-4 py-10 sm:px-6 sm:py-14 lg:px-10 lg:py-16">
+      <section className="grid min-h-[48vh] gap-10 py-12 lg:grid-cols-[0.65fr_0.35fr] lg:items-end">
+        <div>
+          <p className="mb-3 text-[11px] font-semibold uppercase tracking-[0.28em] text-primary">
+            Articles
+          </p>
+          <h1 className="max-w-5xl text-4xl font-black leading-tight text-foreground sm:text-6xl">
+            Notes from the web development orbit.
+          </h1>
+        </div>
+
+        <div className="max-w-xl lg:ml-auto">
+          <p className="text-sm leading-7 text-foreground/70 sm:text-base">
+            A growing archive of articles about frontend foundations, React,
+            styling, navigation, and the ideas I keep returning to while
+            building.
+          </p>
+          <div className="mt-6">
+            <Button to="/">Back Home</Button>
+          </div>
         </div>
       </section>
 
-      <section className="border-y-2 border-zinc-900 bg-zinc-50 px-4 py-6 sm:px-6 sm:py-8 lg:px-8">
-        <div className="mb-6">
-          <p className="text-[11px] font-semibold uppercase tracking-[0.28em] text-zinc-500">
-            Featured Articles
+      <section className="pb-12 pt-10">
+        <div className="mb-10 flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
+          <div>
+            <p className="text-[11px] font-semibold uppercase tracking-[0.28em] text-primary">
+              Archive
+            </p>
+            <h2 className="mt-2 text-2xl font-bold text-foreground">
+              Latest articles
+            </h2>
+          </div>
+          <p className="text-sm text-foreground/55">
+            {articles.length} {articles.length === 1 ? 'entry' : 'entries'} available
           </p>
-          <h2 className="mt-2 text-2xl font-semibold text-zinc-900">
-            Article card grid
-          </h2>
         </div>
 
         <ArticleList articles={articles} />
