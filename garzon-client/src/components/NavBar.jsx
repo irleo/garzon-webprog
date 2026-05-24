@@ -1,3 +1,4 @@
+import { useState, useEffect } from "react";
 import { NavLink } from "react-router-dom";
 import logo from "../assets/images/logo.jpg";
 
@@ -32,8 +33,22 @@ const signUpLinkClassName = ({ isActive }) =>
   ].join(" ");
 
 const NavBar = () => {
+  const [scrolled, setScrolled] = useState(false);
+
+  useEffect(() => {
+    const onScroll = () => setScrolled(window.scrollY > 20);
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
+  }, []);
+
   return (
-    <header className="fixed inset-x-0 top-0 z-50 border-b border-border bg-cosmic text-foreground">
+    <header
+      className={`fixed inset-x-0 top-0 z-50 text-foreground transition-all duration-300  ${
+        scrolled
+          ? "border-b border-white/10 bg-background/60 backdrop-blur-md"
+          : "border-b border-transparent bg-cosmic"
+      }`}
+    >
       <div className="container flex items-center justify-between py-4">
         <NavLink to="/" className="group flex items-center gap-4">
           <div className="flex h-13 w-13 items-center justify-center rounded-full border border-border bg-card shadow-sm transition-all group-hover:shadow-[0_0_14px_rgba(139,92,246,0.25)]">
